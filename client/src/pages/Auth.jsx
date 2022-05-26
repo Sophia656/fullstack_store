@@ -1,14 +1,38 @@
-import React from 'react';
+import React, { useState, useContext } from 'react';
+import { Context } from '..';
 import {Container, Form} from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/Row";
 import { NavLink, useLocation } from 'react-router-dom';
-import { LOGIN_ROUTE, REGISTRATION_ROUTE } from '../utils/consts';
+import { LOGIN_ROUTE, REGISTRATION_ROUTE, SHOP_ROUTE } from '../utils/consts';
+import { login, registration } from '../http/userAPI';
+import {observer} from "mobx-react-lite";
+import { useNavigate } from 'react-router-dom'; 
 
-const Auth = () => {
+const Auth = observer(() => {
+    const {user} = useContext(Context)
     const location = useLocation()
+    const navigate = useNavigate()
     const isLogin = location.pathname === LOGIN_ROUTE
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+
+    const click = async () => {
+        try {
+            let data;
+            if (isLogin) {
+                data = await login(email, password)
+            } else {
+                data = await registration(email, password)
+            }
+            user.setUser(data)
+            user.setIsAuth(true)
+            navigate(SHOP_ROUTE)
+        } catch (error) {
+            alert(error.responce.data.message)
+        }
+    }
 
     return (
         <Container
@@ -21,10 +45,15 @@ const Auth = () => {
                     <Form.Control
                         className="mt-3"
                         placeholder="Введите email..."
+                        value={email}
+                        onChange={e => setEmail(e.target.value)}
                     />
                     <Form.Control
                         className="mt-3"
                         placeholder="Введите пароль..."
+                        value={password}
+                        onChange={e => setPassword(e.target.value)}
+                        type='password'
                     />
                     <Row className="mt-3 pr-3 pl-3">
                         {isLogin
@@ -39,12 +68,17 @@ const Auth = () => {
                             <NavLink style={{textDecoration: 'none'}} to={LOGIN_ROUTE}> Войдите!</NavLink>
                         </div>
                         }
-                        <Button variant={'outline-dark'}>{isLogin ? 'Войти' : 'Зарегестрироваться'}</Button>
+                        <Button 
+                            variant={'outline-dark'}
+                            onClick={click}
+                        >
+                            {isLogin ? 'Войти' : 'Зарегестрироваться'}
+                        </Button>
                     </Row>
                 </Form>
             </Card>
         </Container>
     );
-};
+});
 
 export default Auth;

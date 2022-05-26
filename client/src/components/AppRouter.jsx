@@ -7,7 +7,6 @@ import { authRoutes, publicRoutes } from '../routes';
 const AppRouter = () => {
     const {user} = useContext(Context)
 
-    console.log(user)
     return (
         <Routes>
             {user.isAuth === true && authRoutes.map(route =>
