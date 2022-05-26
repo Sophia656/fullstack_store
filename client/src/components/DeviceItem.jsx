@@ -14,13 +14,13 @@ const DeviceItem = ({device}) => {
                 <Image width={150} height={150} src={process.env.REACT_APP_API_URL + device.img} />
                 <div className=" mt-2" style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}>
                     <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                        <div className="text-black-50">Samsung...</div>
+                        <div className="text-black-50">{device.price}</div>
                         <div style={{display: 'flex', alignItems: 'center'}}>
                             <div>{device.rating}</div>
                             <img width={20} height={15} src={star} />
                         </div>
                     </div>
-                    <div>{device.name}</div>
+                    <div style={{fontWeight: 'bold'}}>{device.name}</div>
                 </div>
             </Card>
         </Col>
